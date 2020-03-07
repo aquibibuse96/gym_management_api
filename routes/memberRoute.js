@@ -87,14 +87,18 @@ router.get('/getSubscriberDetails/:id', (request, response) => {
     try {
         var id = request.params.id;
         var connection = db.connect();
-        // var statement = `select * from person_tb p inner join subscriber_tb s on s.person_id = p.person_id where p.person_id = ${id}`;
-       
-        var statement = `SELECT *
-        FROM member_reg_tb m
-            INNER JOIN subscriber_tb s ON m.subscriber_id = s.subscriber_id
-            INNER JOIN gym_tb g ON m.gym_id  = g.gym_id
-            INNER JOIN person_tb o ON s.person_id = o.person_id
-            INNER JOIN plan_tb p ON m.plan_id = p.plan_id where o.person_id=${id};`;
+        var statement = ` SELECT *
+        FROM person_tb o
+            LEFT JOIN subscriber_tb s ON s.person_id = o.person_id
+            LEFT JOIN member_reg_tb m ON m.subscriber_id = s.subscriber_id
+            LEFT JOIN gym_tb g ON m.gym_id  = g.gym_id
+            LEFT JOIN plan_tb p ON m.plan_id = p.plan_id where o.person_id=${id};`;
+        // var statement = `SELECT *
+        // FROM subscriber_tb s
+        //     INNER JOIN member_reg_tb m ON s.subscriber_id = m.subscriber_id
+        //     INNER JOIN gym_tb g ON m.gym_id  = g.gym_id
+        //     INNER JOIN person_tb o ON s.person_id = o.person_id
+        //     INNER JOIN plan_tb p ON m.plan_id = p.plan_id where o.person_id=${id};`;
        
         connection.query(statement, (error, dbResult) => {
             response.send(utils.createResponse(error, dbResult));

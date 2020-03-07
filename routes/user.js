@@ -55,4 +55,19 @@ router.get('/memberRegisterationValidation/:id',(request,response)=>{
         });
     }
 });
+router.post('/app-register', (request, response) => {
+    try {
+        person = request.body;
+        var connection = db.connect();
+        var statement = `insert into person_tb set ? `;
+        connection.query(statement, person, (error, dbResult) => {
+            response.send(utils.createResponse(error, dbResult));
+        });
+    } catch (ex) {
+        response.send({
+            status: 'error',
+        });
+    }
+});
+
 module.exports = router;
